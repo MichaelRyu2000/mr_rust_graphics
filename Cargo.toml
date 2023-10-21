@@ -1,0 +1,10 @@
+[workspace]
+members = ["tutorial1_window"]
+resolver = "2"
+
+[workspace.dependencies]
+winit = "0.28"
+env_logger = "0.10"
+log = "0.4"
+wgpu = "0.17"
+cfg-if = "1"
