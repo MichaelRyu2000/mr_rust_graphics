@@ -14,7 +14,7 @@ struct State {
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
     size: winit::dpi::PhysicalSize<u32>,
-
+    clear_color: wgpu::Color,
     // window must be declared after the surface so it gets
     // dropped after it as the surface contains unsafe
     // references to the window's resources
@@ -85,6 +85,8 @@ impl State {
         // if want to let users pick what PresentMode, can use SurfaceCapabilities::present_modes to get list 
         surface.configure(&device, &config);
 
+        let clear_color = wgpu::Color::BLACK;
+
         Self {
             window,
             surface,
@@ -92,7 +94,8 @@ impl State {
             queue,
             config,
             size,
-        }
+            clear_color,
+        }  
     }
 
     pub fn window(&self) -> &Window {
@@ -111,7 +114,18 @@ impl State {
     // returns a bool to indicate whether an event has been fully processed
     // if true, main loop won't process the event any further
     fn input(&mut self, event: &WindowEvent) -> bool {
-        false
+        match event {
+            WindowEvent::CursorMoved { position, .. } => {
+                self.clear_color = wgpu::Color {
+                    r: position.x as f64 / self.size.width as f64,
+                    g: position.y as f64 / self.size.height as f64,
+                    b: 1.0,
+                    a: 1.0,
+                };
+                true
+            }
+            _ => false,
+        }
     }
 
     fn update(&mut self) {
@@ -143,12 +157,7 @@ impl State {
                     view: &view,
                     resolve_target: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color {
-                            r: 0.1,
-                            g: 0.2,
-                            b: 0.3,
-                            a: 1.0,
-                        }),
+                        load: wgpu::LoadOp::Clear(self.clear_color),
                         store: true, // tells wgpu whether we want to store the rendered result to Texture behind our TextureView (in this case, SurfaceTexture)
                     },
                 })],
