@@ -1,5 +1,13 @@
 [workspace]
-members = ["tutorial1_window", "tutorial2_surface", "tutorial3_pipeline", "tutorial3_pipeline_challenge", "tutorial4_buffers", "tutorial4_buffers_challenge"]
+members = [
+    "tutorial1_window", 
+    "tutorial2_surface", 
+    "tutorial3_pipeline", 
+    "tutorial3_pipeline_challenge", 
+    "tutorial4_buffers", 
+    "tutorial4_buffers_challenge",
+    "tutorial5_textures",
+    ]
 resolver = "2"
 
 [workspace.dependencies]
