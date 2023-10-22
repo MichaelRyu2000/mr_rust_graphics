@@ -17,6 +17,7 @@ wgpu = { workspace = true }
 cfg-if = { workspace = true }
 pollster = { workspace = true }
 bytemuck = { workspace = true }
+anyhow = { workspace = true }
 
 # note: decoding jpegs in WASM isn't very performant
 # if want to speed up image loading, consider using browser built-in decoders instead of image when using wasm-bindgen (involves creating <img> tag in Rust)
