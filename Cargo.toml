@@ -1,5 +1,5 @@
 [workspace]
-members = ["tutorial1_window", "tutorial2_surface", "tutorial3_pipeline"]
+members = ["tutorial1_window", "tutorial2_surface", "tutorial3_pipeline", "tutorial3_pipeline_challenge"]
 resolver = "2"
 
 [workspace.dependencies]
