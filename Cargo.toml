@@ -13,6 +13,7 @@ members = [
     "tutorial7_instancing",
     "tutorial7_instancing_challenge",
     "tutorial8_depth",
+    "tutorial8_depth_challenge",
     ]
 resolver = "2"
 
