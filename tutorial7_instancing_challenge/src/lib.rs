@@ -77,7 +77,6 @@ pub const OPENGL_TO_WGPU_MATRIX: cgmath::Matrix4<f32> = cgmath::Matrix4::new(
 
 const NUM_INSTANCES_PER_ROW: u32 = 10;
 const INSTANCE_DISPLACEMENT: cgmath::Vector3<f32> = cgmath::Vector3::new(NUM_INSTANCES_PER_ROW as f32 * 0.5, 0.0, NUM_INSTANCES_PER_ROW as f32 * 0.5);
- 
 
 struct Camera {
     eye: cgmath::Point3<f32>,
@@ -211,6 +210,8 @@ impl CameraController {
     }
 }
 
+const ROTATION_SPEED: f32 = 2.0 * std::f32::consts::PI / 60.0;
+
 struct Instance {
     position: cgmath::Vector3<f32>,
     rotation: cgmath::Quaternion<f32>, // a mathematical structure often used to represent rotation
@@ -219,13 +220,15 @@ struct Instance {
 #[repr(C)]
 #[derive(Copy, Clone, bytemuck::Pod, bytemuck::Zeroable)]
 struct InstanceRaw {
-    mode: [[f32; 4]; 4],
+    transform: [[f32; 4]; 4],
 }
 
 impl Instance {
     fn to_raw(&self) -> InstanceRaw {
+        let transform = cgmath::Matrix4::from_translation(self.position) * cgmath::Matrix4::from(self.rotation);
+        
         InstanceRaw {
-            mode: (cgmath::Matrix4::from_translation(self.position) * cgmath::Matrix4::from(self.rotation)).into(),
+            transform: transform.into(),
         }
     }
 }
@@ -282,18 +285,20 @@ struct State {
     num_indices: u32,
     diffuse_bind_group: wgpu::BindGroup,
     diffuse_texture: texture::Texture,
-    camera: Camera,
     camera_uniform: CameraUniform,
     camera_buffer: wgpu::Buffer,
     camera_bind_group: wgpu::BindGroup,
     camera_controller: CameraController,
+    camera_staging: CameraStaging,
     instances: Vec<Instance>,
     instance_buffer: wgpu::Buffer,
 }
 
 impl State {
     // Creating some of the wgpu types requires async 
-    async fn new(window: Window) -> Self {       
+    async fn new(window: Window) -> Self {
+        
+        
         let instances = (0..NUM_INSTANCES_PER_ROW).flat_map(|z| {
             (0..NUM_INSTANCES_PER_ROW).map(move |x| {
                 let position = cgmath::Vector3 { x: x as f32, y: 0.0, z: z as f32 } - INSTANCE_DISPLACEMENT;
@@ -451,7 +456,8 @@ impl State {
         let camera_controller = CameraController::new(0.2);
 
         let mut camera_uniform = CameraUniform::new();
-        camera_uniform.update_view_proj(&camera);
+        let camera_staging = CameraStaging::new(camera);
+        camera_staging.update_camera(&mut camera_uniform);
 
         let camera_buffer = device.create_buffer_init(
             &wgpu::util::BufferInitDescriptor {
@@ -577,11 +583,11 @@ impl State {
             num_indices,
             diffuse_bind_group,
             diffuse_texture,
-            camera,
             camera_uniform,
             camera_buffer,
             camera_bind_group,
             camera_controller,
+            camera_staging,
             instances,
             instance_buffer,
         }  
@@ -598,7 +604,7 @@ impl State {
             self.config.height = new_size.height;
             self.surface.configure(&self.device, &self.config);
 
-            self.camera.aspect = self.config.width as f32 / self.config.height as f32;
+            self.camera_staging.camera.aspect = self.config.width as f32 / self.config.height as f32;
         }
     }
 
@@ -610,8 +616,9 @@ impl State {
     }
 
     fn update(&mut self) {
-        self.camera_controller.update_camera(&mut self.camera);
-        self.camera_uniform.update_view_proj(&self.camera);
+        self.camera_controller.update_camera(&mut self.camera_staging.camera);
+        self.camera_staging.model_rotation += cgmath::Deg(2.0);
+        self.camera_staging.update_camera(&mut self.camera_uniform);
         self.queue.write_buffer(&self.camera_buffer, 0, bytemuck::cast_slice(&[self.camera_uniform]));
     }
 
