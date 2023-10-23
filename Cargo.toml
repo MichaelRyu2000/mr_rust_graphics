@@ -10,6 +10,7 @@ members = [
     "tutorial5_textures_challenge",
     "tutorial6_3dcamera",
     "tutorial6_3dcamera_challenge",
+    "tutorial7_instancing",
     ]
 resolver = "2"
 
