@@ -8,6 +8,7 @@ members = [
     "tutorial4_buffers_challenge",
     "tutorial5_textures",
     "tutorial5_textures_challenge",
+    "tutorial6_3dcamera",
     ]
 resolver = "2"
 
@@ -20,3 +21,4 @@ cfg-if = "1"
 pollster = "0.3"
 bytemuck = { version = "1.12", features = [ "derive" ] }
 anyhow = "1.0"
+cgmath = "0.18"
