@@ -7,6 +7,7 @@ members = [
     "tutorial4_buffers", 
     "tutorial4_buffers_challenge",
     "tutorial5_textures",
+    "tutorial5_textures_challenge",
     ]
 resolver = "2"
 
