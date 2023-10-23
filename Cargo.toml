@@ -12,6 +12,7 @@ members = [
     "tutorial6_3dcamera_challenge",
     "tutorial7_instancing",
     "tutorial7_instancing_challenge",
+    "tutorial8_depth",
     ]
 resolver = "2"
 
