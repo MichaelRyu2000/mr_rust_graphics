@@ -5,3 +5,6 @@ Tutorial Link: https://sotrh.github.io/learn-wgpu/
 
 
 
+Todo:
+
+Challenge for tutorial 8

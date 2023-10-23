@@ -14,6 +14,7 @@ members = [
     "tutorial7_instancing_challenge",
     "tutorial8_depth",
     "tutorial8_depth_challenge",
+    "tutorial9_models",
     ]
 resolver = "2"
 
@@ -27,3 +28,6 @@ pollster = "0.3"
 bytemuck = { version = "1.12", features = [ "derive" ] }
 anyhow = "1.0"
 cgmath = "0.18"
+tobj = { version = "3.2.1", features = [
+    "async",
+]}
